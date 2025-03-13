@@ -24,6 +24,15 @@ Include:
 - Setting working directory
 - Adding source code
 - Running the application
+- Exposing the port
+- Healthcheck
+- Command to start the application
+- Multi-stage build if applicable
+- Environment variables if applicable
+- Labels if applicable
+- User if applicable
+- Volume if applicable
+- Entrypoint if applicable
 """
 
 def generate_dockerfile(language):
