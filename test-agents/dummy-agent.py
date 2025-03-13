@@ -5,7 +5,7 @@ from huggingface_hub import InferenceClient
 
 # Load configuration from config file
 try:
-    with open('config.json', 'r') as config_file:
+    with open('../config.json', 'r') as config_file:
         config = json.load(config_file)
         os.environ["HF_TOKEN"] = config.get("HF_TOKEN", "")
 except FileNotFoundError:

@@ -10,7 +10,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Load configuration from config file
 try:
-    with open('config.json', 'r') as config_file:
+    with open('../config.json', 'r') as config_file:
         config = json.load(config_file)
         hf_token = config.get("HF_TOKEN", "")
         if not hf_token:

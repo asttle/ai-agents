@@ -3,7 +3,7 @@ import json
 from openai import OpenAI
 
 try:
-    with open('config.json', 'r') as config_file:
+    with open('../config.json', 'r') as config_file:
         config = json.load(config_file)
         os.environ["GITHUB_TOKEN"] = config.get("GH_TOKEN", "")
 except FileNotFoundError:
