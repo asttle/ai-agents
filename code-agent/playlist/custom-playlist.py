@@ -1,16 +1,36 @@
 import json
+import os 
+import base64
 from smolagents import CodeAgent, DuckDuckGoSearchTool, FinalAnswerTool, HfApiModel, Tool, tool, VisitWebpageTool
+from opentelemetry.sdk.trace import TracerProvider
+
+from openinference.instrumentation.smolagents import SmolagentsInstrumentor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 
 try:
     with open('../../config.json', 'r') as config_file:
         config = json.load(config_file)
         hf_token = config.get("HF_TOKEN", "")
+        langfuse_public_key = config.get("LANGFUSE_PUBLIC_KEY", "")
+        langfuse_secret_key = config.get("LANGFUSE_SECRET_KEY", "")
         if not hf_token:
             print("HF_TOKEN not found in config.json or is empty")
             exit(1)
 except FileNotFoundError:
     print("Config file not found. Please create a config.json file with your tokens.")
     exit(1)
+
+LANGFUSE_AUTH=base64.b64encode(f"{langfuse_public_key}:{langfuse_secret_key}".encode()).decode()
+
+os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "https://cloud.langfuse.com/api/public/otel" # EU data region
+# os.environ["OTEL_EXPORTER_OTLP_ENDPOINT"] = "https://us.cloud.langfuse.com/api/public/otel" # US data region
+os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = f"Authorization=Basic {LANGFUSE_AUTH}"
+
+trace_provider = TracerProvider()
+trace_provider.add_span_processor(SimpleSpanProcessor(OTLPSpanExporter()))
+
+SmolagentsInstrumentor().instrument(tracer_provider=trace_provider)
 @tool
 def suggest_workout_plan(body_part: str) -> str:
     """
