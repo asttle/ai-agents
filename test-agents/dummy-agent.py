@@ -1,8 +1,15 @@
 import os
 import json
 from huggingface_hub import InferenceClient
+import requests
+from huggingface_hub import configure_http_backend
 
+def backend_factory() -> requests.Session:
+    session = requests.Session()
+    session.verify = False
+    return session
 
+configure_http_backend(backend_factory=backend_factory)
 # Load configuration from config file
 try:
     with open('../config.json', 'r') as config_file:
@@ -11,8 +18,6 @@ try:
 except FileNotFoundError:
     print("Config file not found. Please create a config.json file with your tokens.")
     exit(1)
-
-os.environ['CURL_CA_BUNDLE'] = ''
 
 # Create client
 client = InferenceClient("meta-llama/Llama-3.2-3B-Instruct")

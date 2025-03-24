@@ -1,12 +1,15 @@
 import json
-import os
-import ssl
-import warnings
 from gradio_client import Client
 
-# Suppress SSL warnings
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+import requests
+from huggingface_hub import configure_http_backend
+
+def backend_factory() -> requests.Session:
+    session = requests.Session()
+    session.verify = False
+    return session
+
+configure_http_backend(backend_factory=backend_factory)
 
 # Load configuration from config file
 try:
@@ -20,14 +23,6 @@ except FileNotFoundError:
     print("Config file not found. Please create a config.json file with your tokens.")
     exit(1)
 
-# Disable SSL verification
-os.environ['CURL_CA_BUNDLE'] = ''
-os.environ['REQUESTS_CA_BUNDLE'] = ''
-os.environ['SSL_CERT_FILE'] = ''
-
-# Monkey patch the SSL verification
-original_context = ssl._create_default_https_context
-ssl._create_default_https_context = ssl._create_unverified_context
 
 try:
     # Create client with proper authentication
@@ -78,7 +73,3 @@ except Exception as e:
         print("1. Check that the Space name is correct: 'Asttle/First_agent_template'")
         print("2. Verify that the Space exists and is public or you have access to it")
         print("3. Check for typos in the Space name")
-    
-finally:
-    # Restore the original SSL context
-    ssl._create_default_https_context = original_context
