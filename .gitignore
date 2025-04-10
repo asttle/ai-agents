@@ -6,3 +6,4 @@ lib/*
 newenv/*
 crewai-env/*
 config.json
+docs-agent/.ai-sandbox*
