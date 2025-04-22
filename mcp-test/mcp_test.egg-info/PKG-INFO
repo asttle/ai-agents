@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: mcp-test
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.12.9
+Description-Content-Type: text/markdown
+Requires-Dist: mcp[cli]>=1.6.0
+Requires-Dist: aiohttp>=3.8.5
